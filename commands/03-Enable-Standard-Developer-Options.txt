@@ -1,0 +1,1 @@
+pm enable --user 0 'com.android.settings/.Settings$DevelopmentSettingsDashboardActivity'
