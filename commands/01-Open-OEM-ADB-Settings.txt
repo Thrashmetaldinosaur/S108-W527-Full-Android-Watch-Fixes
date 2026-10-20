@@ -1,0 +1,1 @@
+am start --user 0 -n com.android.settings/com.android.settings.DwDevelopmentSettingsActivity --ei debug_type 1
