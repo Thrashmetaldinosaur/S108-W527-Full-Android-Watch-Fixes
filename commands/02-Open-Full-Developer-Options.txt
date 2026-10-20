@@ -1,0 +1,1 @@
+am start --user 0 -n com.android.settings/.SubSettings --es :settings:show_fragment com.android.settings.development.DevelopmentSettingsDashboardFragment
