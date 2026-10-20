@@ -1,0 +1,1 @@
+am start -a android.settings.TETHER_SETTINGS
