@@ -12,6 +12,22 @@ Community notes for the **XTQ S108 / S108 W527 full-Android smartwatch**, tested
 
 **USB tethering is separate from USB debugging.** The **USB Network Tethering** toggle could be switched on, but a working RNDIS/network connection on the Windows PC was **not** verified. Do not interpret successful ADB connection as proof of tethered internet.
 
+
+## Android 13 / crDroid 9.3 community fixes (October 2026)
+
+The repository was originally documented on stock Android 9. Additional **device-tested Android 13** fixes are now available. These are separate workflows; do **not** flash an S100 image on an S108.
+
+| Fix | Outcome | Files |
+| --- | --- | --- |
+| Physical side-button remapping | **Working and confirmed across a reboot** on an S108 with Magisk | [Instructions](docs/ANDROID13-BUTTON-MAPPER.md), [module source](modules/s108_button_mapper/) |
+| Status-bar clock/icon inset | **Works when applied manually** (28dp left, 16dp right); boot-time reliability under investigation | [UI notes](docs/ANDROID13-UI-OVERLAYS.md), [apply script](scripts/S108-Apply-StatusBar.sh) |
+| Smaller 3-button navigation | **Works when applied manually** (36dp height, 60dp key width); reboot persistence not yet reliable | [UI notes](docs/ANDROID13-UI-OVERLAYS.md), [apply script](scripts/S108-Apply-CompactNavbar.sh) |
+| Play Services / Play Store recovery on LiteGapps | **Working on the tested watch** with a GMS package-path repair and restricted networking fix | [Google notes](docs/ANDROID13-GOOGLE-PLAY.md) |
+
+**Not yet confirmed:** LTE network attachment on US carriers; higher CPU/GPU overclocks; a +3°C thermal trip change; fully persistent compact navbar. The Android 13 root/flash procedure is highly device-specific and is not presented here as a universal flashable image. Preserve recovery/partition backups, never publish signing keys, and do not assume these modifications work on another W527 variant.
+
+The earlier **stock Android 9** instructions below remain applicable only where explicitly indicated.
+
 ## Start here
 
 **[Full illustrated-by-commands walkthrough: Browser downloads → AILIFE APK → Engineering Mode → ADB → Developer Options → USB tethering](docs/S108-SETUP-USB-AND-DEVELOPER-OPTIONS.md)**
@@ -73,6 +89,6 @@ The guide covers the entire path from a stock watch with no PC-side ADB to the t
 | Developer Options access after reboot | Working |
 | Activity Launcher favorite | Working |
 | Windows USB/RNDIS tethering data connection | **Unverified** |
-| Root / Android 13 crDroid on S108 | **Not implemented** |
+| Root / Android 13 crDroid on S108 | Working on one modified watch; see Android 13 notes above. No universal flash guide published |
 
 Issues and contributions are welcome; include your **exact watch model, firmware version, Android version, and what step failed**, but redact IMEI, SIM, IMSI, ICCID, phone numbers, and personal identifiers.
