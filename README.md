@@ -15,6 +15,10 @@ Community notes for the **XTQ S108 / S108 W527 full-Android smartwatch**, tested
 
 ## Android 13 / crDroid 9.3 community fixes (October 2026)
 
+[**Android 13 BootROM unbrick / recovery restoration (tested case)**](docs/ANDROID13-BOOTROM-UNBRICK.md) documents the verified Stage 5B recovery restoration, matching AVB/misc, GPT repair, and native Windows SPRD flasher compatibility. This is an advanced, device-specific case study, not a universal flashable package.
+
+
+
 The repository was originally documented on stock Android 9. Additional **device-tested Android 13** fixes are now available. These are separate workflows; do **not** flash an S100 image on an S108.
 
 | Fix | Outcome | Files |
