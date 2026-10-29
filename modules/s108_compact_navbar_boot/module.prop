@@ -1,0 +1,6 @@
+id=s108_compact_navbar_boot
+name=S108 Compact Navigation (36dp x 60dp) - Boot Persistent, conflict-aware
+version=7.0
+versionCode=700
+author=S108 Full Android Watch community
+description=Reapplies 36dp navbar height/frame and 60dp button width after Android boots; leaves status bar untouched.
