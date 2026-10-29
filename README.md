@@ -15,6 +15,8 @@ Community notes for the **XTQ S108 / S108 W527 full-Android smartwatch**, tested
 
 ## Android 13 / crDroid 9.3 community fixes (October 2026)
 
+**New verified result (October 29): Android 13 now runs with Magisk 30.7 rooted through the NORMAL boot partition, not recovery, and powered-off charging works without starting Android.** The previous recovery-root setup was an intermediate step. [Read the device-tested migration, minimal ramdisk recipe, AVB signing/rollback requirements, and charging verification](docs/ANDROID13-NORMAL-BOOT-MAGISK-CHARGING.md).
+
 [**Android 13 BootROM unbrick / recovery restoration (tested case)**](docs/ANDROID13-BOOTROM-UNBRICK.md) documents the verified Stage 5B recovery restoration, matching AVB/misc, GPT repair, and native Windows SPRD flasher compatibility. This is an advanced, device-specific case study, not a universal flashable package.
 
 
@@ -23,12 +25,13 @@ The repository was originally documented on stock Android 9. Additional **device
 
 | Fix | Outcome | Files |
 | --- | --- | --- |
+| **Normal-boot Magisk 30.7 + powered-off charging** | **Working on the tested S108**, including two normal rooted reboots and charge-only startup; highly device-specific signing | [Migration guide](docs/ANDROID13-NORMAL-BOOT-MAGISK-CHARGING.md), [offline ramdisk builder](scripts/Build-S108-Minimal-Magisk-Ramdisk.py) |
 | Physical side-button remapping | **Working and confirmed across a reboot** on an S108 with Magisk | [Instructions](docs/ANDROID13-BUTTON-MAPPER.md), [module source](modules/s108_button_mapper/) |
 | Status-bar clock/icon inset | **Works when applied manually** (28dp left, 16dp right); boot-time reliability under investigation | [UI notes](docs/ANDROID13-UI-OVERLAYS.md), [apply script](scripts/S108-Apply-StatusBar.sh) |
 | Smaller 3-button navigation | **Works when applied manually** (36dp height, 60dp key width); reboot persistence not yet reliable | [UI notes](docs/ANDROID13-UI-OVERLAYS.md), [apply script](scripts/S108-Apply-CompactNavbar.sh) |
 | Play Services / Play Store recovery on LiteGapps | **Working on the tested watch** with a GMS package-path repair and restricted networking fix | [Google notes](docs/ANDROID13-GOOGLE-PLAY.md) |
 
-**Not yet confirmed:** LTE network attachment on US carriers; higher CPU/GPU overclocks; a +3°C thermal trip change; fully persistent compact navbar. The Android 13 root/flash procedure is highly device-specific and is not presented here as a universal flashable image. Preserve recovery/partition backups, never publish signing keys, and do not assume these modifications work on another W527 variant.
+**Not yet confirmed:** LTE network attachment on US carriers; higher CPU/GPU overclocks; a +3°C thermal trip change; fully persistent compact navbar. The verified Android 13 normal-root migration and minimal-ramdisk builder are documented, but **no universal flashable images or private signing keys** are provided. Preserve recovery/partition backups, never publish signing keys, and do not assume these modifications work on another W527 variant.
 
 The earlier **stock Android 9** instructions below remain applicable only where explicitly indicated.
 
@@ -93,6 +96,6 @@ The guide covers the entire path from a stock watch with no PC-side ADB to the t
 | Developer Options access after reboot | Working |
 | Activity Launcher favorite | Working |
 | Windows USB/RNDIS tethering data connection | **Unverified** |
-| Root / Android 13 crDroid on S108 | Working on one modified watch; see Android 13 notes above. No universal flash guide published |
+| Root / Android 13 crDroid on S108 | **Normal-boot Magisk 30.7 verified across two reboots, with powered-off charging working** on one modified watch; see [migration guide](docs/ANDROID13-NORMAL-BOOT-MAGISK-CHARGING.md); no universal signed images |
 
 Issues and contributions are welcome; include your **exact watch model, firmware version, Android version, and what step failed**, but redact IMEI, SIM, IMSI, ICCID, phone numbers, and personal identifiers.
