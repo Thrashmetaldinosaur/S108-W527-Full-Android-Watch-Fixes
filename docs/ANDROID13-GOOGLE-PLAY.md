@@ -15,6 +15,15 @@ pm path com.google.android.gms
 
 Verify `pm path` now points to `/data/app/.../base.apk` and confirm Play Services package privileges. Verify the file hash before and after copying; don't install an APK of a different version/signing key.
 
+## October 29, 2026: Play Store itself crashing after normal-boot-root migration
+
+On the same S108, Play Store (package **com.android.vending**) crashed repeatedly. The app crash logs showed an attempt to read a **missing LiteGapps system APK** at **/system/product/priv-app/Phonesky/Phonesky.apk** followed by a startup exception. The crDroid Home launcher also had a transient ANR but did not crash again after the next reboot.
+
+**Working fix:** Update **Google Play Store itself** with a properly signed, compatible standalone Play Store APK via a normal package **update** (ADB install with replace), without uninstalling it or clearing application data. The user confirmed the updated Play Store worked. Android 13 normal-boot Magisk root and powered-off charging were unchanged.
+
+Use a trustworthy source and a variant compatible with the exact Android version/CPU. If Android reports a package signature mismatch or a conflicting package, **stop**—do not uninstall the privileged LiteGapps package or blindly wipe GApps/GSF data. Verify the APK source/signature and the existing installation first. This Play Store repair is **separate** from the [Magisk normal-boot and charging solution](ANDROID13-NORMAL-BOOT-MAGISK-CHARGING.md).
+
+
 If Play Store says **“You're offline”** despite working Wi-Fi, inspect `settings get global restricted_networking_mode`. On this watch it was `1` and the tested fix was:
 
 ```sh
