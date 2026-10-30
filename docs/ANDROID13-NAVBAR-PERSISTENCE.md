@@ -91,7 +91,7 @@ Before adapting the workflow:
 5. Verify overlays on the current boot, reboot **once**, and verify repeated 36/36/60dp readings plus unchanged 28/16dp statusbar values. Do **not** claim success merely because the script was installed.
 6. Review `boot-v10.log` for `NAVBAR_V10_SERVICE_SUCCESS`. If it fails, retain logs and do not blindly reboot or reinstall repeatedly.
 
-The [module source directory](../modules/s108_compact_navbar_boot/) can be used as reference for a device-specific installation. **No portable binary installer or universal flashable image is claimed here.** Magisk root and writable /data/adb are prerequisites.
+The [module source directory](../modules/s108_compact_navbar_boot/) can be used as reference for a device-specific installation. The [exact tested upgrade, collection and rollback helpers](../scripts/navbar-v10-upgrade/) are also published for maintainers upgrading the **matching existing v9 module**; they are **not** a first-time or universal installer. **No portable binary installer or universal flashable image is claimed here.** Magisk root and writable /data/adb are prerequisites.
 
 ## Rollback
 
