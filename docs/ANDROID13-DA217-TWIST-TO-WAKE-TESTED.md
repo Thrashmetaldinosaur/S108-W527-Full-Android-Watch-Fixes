@@ -51,6 +51,12 @@ V19 installed and ran successfully on the S108 with its physical DA217 interrupt
 
 V20 adds a `S108Glance` tag on each actual native clock dismissal event (`DISMISS_TAP` or `DISMISS_TIMEOUT`). Its **temporary PC-side ADB controller** listens for those log events and sends Android `KEYCODE_SLEEP 223`, then verifies `dumpsys power` reports `mWakefulness=Asleep`. Two independent trials check timer and tap behavior, including launching Settings underneath the clock to distinguish screen sleep from returning to the previous screen. All results go to Windows Downloads; the temporary APK is uninstalled afterward; IRQ 66 is never activated. Its APK passed offline DEX structural and register tests and temporary-signature verification, **but on-watch validation is pending**. This event-driven host controller is an intermediate integration experiment, **not** a permanent battery-optimized service.
 
+## V20 real display sleep — verified (October 30)
+
+Both V20 native-clock dismissal tests passed on the S108 without activating the accelerometer interrupt. The five-second `DISMISS_TIMEOUT` and tapped `DISMISS_TAP` events triggered a temporary Windows-side ADB controller to send Android `KEYCODE_SLEEP=223`. Each resulting `dumpsys power` capture independently reported **`mWakefulness=Asleep`**, and logcat recorded `PowerManagerService: Going to sleep due to sleep_button`. The temporary APK was uninstalled and final `irq1enable=0` confirmed. V19 separately established the native clock's fullscreen visual appearance.
+
+A V21 **candidate (not yet tested on-watch)** moves the dismissal-to-SLEEP controller from Windows onto the S108 itself using short-lived root-side logcat only while the clock is open. It filters events with a unique arming marker and a timeout guard; the Windows launcher provides two independent trials, verification and cleanup. V21 does not enable the unstable physical IRQ or install a boot-time service. This is an integration step, not proof of permanent low-power twist-to-wake.
+
 ## Critical unresolved issue
 
 The vendor `mir3da` driver generated **19 `Unbalanced pm_runtime_enable!` warnings** during the three successful 1 ms cycles, matching the total IRQ count (2+4+13). The sensor's GPIO IRQ is level-triggered and the DA217 interrupt auto-latch is programmable, but the runtime-PM imbalance has **not** been corrected. These tests do **not** prove 24-hour standby efficiency, low false-wake rates, or safe permanent enablement.
