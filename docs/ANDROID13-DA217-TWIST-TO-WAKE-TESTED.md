@@ -41,6 +41,16 @@ V18 corrected V17's invalid DEX string encoding and **installed successfully**, 
 
 V19 applies the precise register change and adds an independent DEX semantic check. The new check **rejects the actual V18 APK** and passes V19; ZIP structure and local test signature also verify. **V19 has not yet been tested on the S108**, so do not call the native clock operational until a real screenshot and activity lifecycle test pass. V19 leaves the DA217 interrupt off and uninstalls its test APK after the UI trials.
 
+## V19 native fullscreen clock — verified (October 30)
+
+V19 installed and ran successfully on the S108 with its physical DA217 interrupt **disabled**. The 480 × 480 screenshots show a large, centered white `9:59` native `TextClock` on a solid black, immersive fullscreen background, with no address bar, status bar or navigation buttons. The five-second timer and a touchscreen tap each closed the activity; the screenshots show the previous launcher afterward. Android's logs had **no ART VerifyError or application crash**. The test APK was uninstalled and `irq1enable=0` verified.
+
+**Important behavior distinction:** `Activity.finish()` closes the clock but does not turn off the display. Returning to the home or previous app was expected for V19, not a regression in the gesture code. Android's `KEYCODE_SLEEP=223` is an explicit screen-sleep command and must be issued by an authorized controller, rather than assuming an unprivileged activity can call `PowerManager.goToSleep()`.
+
+## V20 native clock dismissal -> display sleep — candidate, NOT yet device-tested
+
+V20 adds a `S108Glance` tag on each actual native clock dismissal event (`DISMISS_TAP` or `DISMISS_TIMEOUT`). Its **temporary PC-side ADB controller** listens for those log events and sends Android `KEYCODE_SLEEP 223`, then verifies `dumpsys power` reports `mWakefulness=Asleep`. Two independent trials check timer and tap behavior, including launching Settings underneath the clock to distinguish screen sleep from returning to the previous screen. All results go to Windows Downloads; the temporary APK is uninstalled afterward; IRQ 66 is never activated. Its APK passed offline DEX structural and register tests and temporary-signature verification, **but on-watch validation is pending**. This event-driven host controller is an intermediate integration experiment, **not** a permanent battery-optimized service.
+
 ## Critical unresolved issue
 
 The vendor `mir3da` driver generated **19 `Unbalanced pm_runtime_enable!` warnings** during the three successful 1 ms cycles, matching the total IRQ count (2+4+13). The sensor's GPIO IRQ is level-triggered and the DA217 interrupt auto-latch is programmable, but the runtime-PM imbalance has **not** been corrected. These tests do **not** prove 24-hour standby efficiency, low false-wake rates, or safe permanent enablement.
