@@ -57,6 +57,12 @@ Both V20 native-clock dismissal tests passed on the S108 without activating the 
 
 A V21 **candidate (not yet tested on-watch)** moves the dismissal-to-SLEEP controller from Windows onto the S108 itself using short-lived root-side logcat only while the clock is open. It filters events with a unique arming marker and a timeout guard; the Windows launcher provides two independent trials, verification and cleanup. V21 does not enable the unstable physical IRQ or install a boot-time service. This is an integration step, not proof of permanent low-power twist-to-wake.
 
+## V21 staging failure; V22 corrected candidate (October 30)
+
+V21 stopped during staging, **before** APK installation or any on-watch sleep test. Its PowerShell launcher used `su -c mkdir -p /data/local/tmp/s108_glance_v21/out`, which created a root-owned working directory, then attempted `adb push` directly into that directory as the unprivileged ADB shell user. The device returned `Permission denied`. Cleanup verified `irq1enable=0`; no driver or motion interrupt was activated.
+
+V22 repairs this exact staging design: each run uses a unique shell-writable flat upload path under `/data/local/tmp`, verifies its SHA-256, copies it with `su` into a separate unique root-owned working directory, and verifies the copied SHA-256. The tested V20 clock APK is reused unchanged. Two short-lived root-side controller trials still verify timeout/tap dismissal to actual display sleep. It checks remote log collection, cleanup, APK removal and final `irq1enable=0` and packages logs in Windows Downloads. **V22 has not yet been tested on this S108**, and must not be represented as a confirmed autonomous controller until device logs prove the two sleep trials.
+
 ## Critical unresolved issue
 
 The vendor `mir3da` driver generated **19 `Unbalanced pm_runtime_enable!` warnings** during the three successful 1 ms cycles, matching the total IRQ count (2+4+13). The sensor's GPIO IRQ is level-triggered and the DA217 interrupt auto-latch is programmable, but the runtime-PM imbalance has **not** been corrected. These tests do **not** prove 24-hour standby efficiency, low false-wake rates, or safe permanent enablement.
