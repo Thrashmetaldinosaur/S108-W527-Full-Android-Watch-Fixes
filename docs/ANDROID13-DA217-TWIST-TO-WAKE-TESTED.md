@@ -35,6 +35,12 @@ V17's first standalone clock APK installed successfully and `am start -W` return
 
 A corrected V18 APK was built, signed, and passed independent offline DEX structural validation. **Its watch-side outcome is still pending**; do not mark the native clock as functional until it is verified on the device. V18 runs without enabling the DA217 interrupt.
 
+## V18 ART verification failure, V19 candidate (October 30)
+
+V18 corrected V17's invalid DEX string encoding and **installed successfully**, but it crashed before the activity could display. The Android 13 runtime reported `java.lang.VerifyError` in `ClockActivity.dispatchTouchEvent(MotionEvent)`: the generated code passed register `v1` (a `MotionEvent`) as the receiver for `Activity.finish()`; the correct receiver is `v0` (the Activity's `this`). V18 was uninstalled, with `irq1enable=0` verified.
+
+V19 applies the precise register change and adds an independent DEX semantic check. The new check **rejects the actual V18 APK** and passes V19; ZIP structure and local test signature also verify. **V19 has not yet been tested on the S108**, so do not call the native clock operational until a real screenshot and activity lifecycle test pass. V19 leaves the DA217 interrupt off and uninstalls its test APK after the UI trials.
+
 ## Critical unresolved issue
 
 The vendor `mir3da` driver generated **19 `Unbalanced pm_runtime_enable!` warnings** during the three successful 1 ms cycles, matching the total IRQ count (2+4+13). The sensor's GPIO IRQ is level-triggered and the DA217 interrupt auto-latch is programmable, but the runtime-PM imbalance has **not** been corrected. These tests do **not** prove 24-hour standby efficiency, low false-wake rates, or safe permanent enablement.
