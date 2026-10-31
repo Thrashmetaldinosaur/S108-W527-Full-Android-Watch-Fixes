@@ -63,6 +63,12 @@ V21 stopped during staging, **before** APK installation or any on-watch sleep te
 
 V22 repairs this exact staging design: each run uses a unique shell-writable flat upload path under `/data/local/tmp`, verifies its SHA-256, copies it with `su` into a separate unique root-owned working directory, and verifies the copied SHA-256. The tested V20 clock APK is reused unchanged. Two short-lived root-side controller trials still verify timeout/tap dismissal to actual display sleep. It checks remote log collection, cleanup, APK removal and final `irq1enable=0` and packages logs in Windows Downloads. **V22 has not yet been tested on this S108**, and must not be represented as a confirmed autonomous controller until device logs prove the two sleep trials.
 
+## V22 chmod failure; V23 simplified staging (October 30)
+
+V22 stopped **before APK installation or any sleep trial** because the rooted setup attempted `chmod 755` on a test directory and Android returned `Operation not permitted`. Its final check confirmed `irq1enable=0`. This is a setup failure, not a failed on-watch clock dismissal.
+
+V23 removes all `chmod`, `chown`, and internal script-copy operations. It uploads the verified controller directly to a unique `/data/local/tmp/..._controller.sh` flat path as the ADB shell user, then invokes it through `/system/bin/sh` under Magisk root. Only its output directory is created by root; diagnostic files are read with `su -c cat` rather than an unprivileged `adb pull`. It retains the proven V20 APK, independently checks timeout and tap dismissal via short-lived on-watch controllers, collects power-state evidence, uninstalls the test APK, cleans staged files, and verifies `irq1enable=0` without enabling motion interrupts. **V23 is offline-checked but still pending actual device validation.**
+
 ## Critical unresolved issue
 
 The vendor `mir3da` driver generated **19 `Unbalanced pm_runtime_enable!` warnings** during the three successful 1 ms cycles, matching the total IRQ count (2+4+13). The sensor's GPIO IRQ is level-triggered and the DA217 interrupt auto-latch is programmable, but the runtime-PM imbalance has **not** been corrected. These tests do **not** prove 24-hour standby efficiency, low false-wake rates, or safe permanent enablement.
