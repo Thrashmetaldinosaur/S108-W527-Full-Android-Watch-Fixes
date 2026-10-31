@@ -16,6 +16,14 @@
 
 Two independent two-cycle runs succeeded, **four physical wrist wakes total**. Each first cycle detected an actual `hyn_ts` touchscreen finger-down on `/dev/input/event8` and turned the screen off early; each second cycle recorded no tap and used the approximately five-second timeout. IRQ 66 increments per run were **5+7=12** and **3+2=5**, respectively. Watch-side logs reported `TAP_DISMISS_DETECTED` and `NO_TAP_FIVE_SECOND_TIMEOUT`, with final `irq1enable=0` and sensor latch restored to `0xCC`. These tests still showed the normal Android UI; **no dedicated white-on-black clock was verified yet**.
 
+## V15 instability and cleanup warning (October 30)
+
+An experimental two-cycle clock UI prototype failed **before** reaching its HTML clock launch: the physical DA217 relay received **no F10 event**, even though IRQ 66 increased by **284** in the first screen-off window. Earlier successful wake cycles did not justify enabling the sensor persistently.
+
+**Safety-critical:** its Windows-side cleanup initially reported `irq1enable=1` despite watch-side cleanup having reported `0`. A subsequent **explicit rooted command and readback** confirmed `irq1enable=0`. The DA217 latch was verified restored to `0xCC`. Always verify the final IRQ sysfs value directly and treat failed disable writes as hard failures.
+
+Clock rendering was **not evaluated** by this run. Subsequent UI trials should run without enabling the physical accelerometer interrupt.
+
 ## Critical unresolved issue
 
 The vendor `mir3da` driver generated **19 `Unbalanced pm_runtime_enable!` warnings** during the three successful 1 ms cycles, matching the total IRQ count (2+4+13). The sensor's GPIO IRQ is level-triggered and the DA217 interrupt auto-latch is programmable, but the runtime-PM imbalance has **not** been corrected. These tests do **not** prove 24-hour standby efficiency, low false-wake rates, or safe permanent enablement.
