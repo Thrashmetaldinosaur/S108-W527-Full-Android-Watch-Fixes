@@ -24,6 +24,11 @@ An experimental two-cycle clock UI prototype failed **before** reaching its HTML
 
 Clock rendering was **not evaluated** by this run. Subsequent UI trials should run without enabling the physical accelerometer interrupt.
 
+## V16 clock UI rendering verified, separate from sensor
+
+The October 30 V16 trial served a local HTML clock over `127.0.0.1` and Chrome returned HTTP 200. Two device screenshots independently confirmed a white-on-black clock displaying the correct local time. However, Chrome's address bar, Google account banner, Android status bar and navigation bar remained visible; the large 12-hour time including `PM` was cropped horizontally. V16 **did not touch the DA217 interrupt** and the final readback confirmed `irq1enable=0`.
+
+A dedicated native fullscreen Android clock activity is preferable to browser kiosk workarounds. Any test APK should be installed temporarily, tested independently of IRQ 66, and removed afterward; no permanent wake service is yet validated.
 ## Critical unresolved issue
 
 The vendor `mir3da` driver generated **19 `Unbalanced pm_runtime_enable!` warnings** during the three successful 1 ms cycles, matching the total IRQ count (2+4+13). The sensor's GPIO IRQ is level-triggered and the DA217 interrupt auto-latch is programmable, but the runtime-PM imbalance has **not** been corrected. These tests do **not** prove 24-hour standby efficiency, low false-wake rates, or safe permanent enablement.
