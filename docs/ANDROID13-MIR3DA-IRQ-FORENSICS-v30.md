@@ -28,13 +28,19 @@ At **`0x0056c2a4`**, `mir3da_irq1_work` calls `enable_irq1` after its processing
 
 A correct design needs synchronization, cancellation or draining of outstanding work before confirming disable, a check of the desired tilt-enable state immediately before rearm, and explicit acknowledgement/deassertion of the DA217 interrupt source. The sensor's shorter `INT_LATCH=0xC9` reduced interrupts in earlier tests but **did not solve the driver**.
 
+## Fault 4 — unbalanced IRQ wake enable
+
+The exact disassembly reveals a further independent imbalance. `enable_irq1()` at raw Image offset `0x0056ad68` calls `irq_set_irq_wake(irq, 1)` at **`0x0056adb4`**, each time its internally tracked IRQ-disabled bit is clear. The corresponding `disable_irq1()` at `0x0056ad24` only calls `disable_irq()` at **`0x0056ad58`**. It never calls `irq_set_irq_wake(irq, 0)`; **there is only one direct call to `irq_set_irq_wake` in the inspected MIR3DA driver text, and it is the enable path**.
+
+Linux's `irq_set_irq_wake` maintains a reference-counted `wake_depth`, independent of interrupt mask state. Enabling wake more than once without matching off operations can leave wake permission held after `irq1enable=0`. This does **not** prove how many outstanding references are currently on the S108: the kernel's `wake_depth` is not exposed by the previous captures. It does invalidate treating `irq1enable=0` alone as evidence that all IRQ wake permissions have been balanced. During any future driver repair, wake enable/disable calls must balance **exactly once per transition**, not once per IRQ, including error and teardown paths. The physical interrupt remains intentionally disabled while investigation continues.
+
 ## Repair outline — not a flash recipe
 
-1. In the IRQ handler, acquire a balanced runtime-PM reference using primitives appropriate for hard-IRQ context; if work scheduling fails, release the reference.
-2. Resume/safely access the I²C device in process context; **replace the per-interrupt `pm_runtime_force_resume`** with the correctly paired workqueue PM operations.
-3. On every worker exit, release its PM reference. Avoid races with system suspend.
-4. Before rearming, check the synchronized desired tilt/IRQ-enable state. Deassert or clear the source; enforce a bounded one-shot/cooldown and fail closed if the line remains asserted.
-5. Preserve original boot, recovery, AVB, Magisk and powered-off charging; only consider a signed candidate kernel after offline verification and explicit fail-safe rollback. Patching the one warning-producing call to a NOP would **not** fix PM reference counts, the rearm race or storm behavior.
+1. Balance IRQ wake depth: pair each successful `irq_set_irq_wake(irq, 1)` with `irq_set_irq_wake(irq, 0)` at a synchronized disable/teardown transition. Do not change `wake_depth` blindly before verifying its initial state.\n2. In the IRQ handler, acquire a balanced runtime-PM reference using primitives appropriate for hard-IRQ context; if work scheduling fails, release the reference.
+3. Resume/safely access the I²C device in process context; **replace the per-interrupt `pm_runtime_force_resume`** with the correctly paired workqueue PM operations.
+4. On every worker exit, release its PM reference. Avoid races with system suspend.
+5. Before rearming, check the synchronized desired tilt/IRQ-enable state. Deassert or clear the source; enforce a bounded one-shot/cooldown and fail closed if the line remains asserted.
+6. Preserve original boot, recovery, AVB, Magisk and powered-off charging; only consider a signed candidate kernel after offline verification and explicit fail-safe rollback. Patching the one warning-producing call to a NOP would **not** fix PM reference counts, the rearm race or storm behavior.
 
 ## Current safe operating state
 
