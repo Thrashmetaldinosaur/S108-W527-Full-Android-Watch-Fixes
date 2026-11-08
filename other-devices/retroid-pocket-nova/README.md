@@ -30,7 +30,7 @@ The Nova exposes an **Xbox Wireless Controller**, vendor/product **2022:3002**. 
 - Working `adb` connection over USB or Wi-Fi
 - Exact device identity checked before applying any module
 
-Use the **v3 package**, not the unsuccessful v1/v2 test modules. The v3 installer first performs a 30-second temporary verification and requires both physical button events and injected axes before allowing permanent installation. It does **not** automatically reboot.
+**Repository status:** The working source and instructions are published here, but the compiled installable Magisk ZIP is **not yet uploaded to GitHub**. Do not attempt to install the source folder as a Magisk module. The verified binary ZIP must be copied here separately.\n\nUse the **v3 package**, not the unsuccessful v1/v2 test modules. The v3 installer first performs a 30-second temporary verification and requires both physical button events and injected axes before allowing permanent installation. It does **not** automatically reboot.
 
 > The original, tested v3 install bundle includes `NOVA-M1M2-TRIGGER-REPLACEMENT-MAGISK-v3.zip` (the Magisk-installable module), `nova_m1m2_native_v3.c`, the compiled ARM64 helper, the `.kl` layout, `service.sh`, `Install-Nova-M1M2-v3.ps1`, license, and integrity hashes. **Do not use a ZIP from an unofficial mirror.** The complete bundle's SHA-256 is `bcafff208e21af7b7a62d27381fc2da7edf1d87915a7af23bae74828b5c53776`; the inner Magisk module's SHA-256 is `f6302eb58537a7d5a4ba19c42bd28fbc8e1da047c994cf1fcf7bb03a8093ebb1`.
 
