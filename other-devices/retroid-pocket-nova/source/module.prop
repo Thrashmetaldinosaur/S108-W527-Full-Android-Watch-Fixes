@@ -1,0 +1,6 @@
+id=nova_m1m2_triggers
+name=Nova M1 M2 Physical Trigger Replacement
+version=v3.0
+versionCode=3
+author=Local open-source diagnostic build
+description=On Nova Default mode, physical M1(306)/M2(309) become native Android L2/R2 button events plus full-pressure trigger axes through original Xbox controller.
